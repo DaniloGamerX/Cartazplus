@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartazes de Ofertas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    .size-A2{width:420px;height:594px;--s:1.8}
+    .size-A3{width:297px;height:420px;--s:1.4}
+    .size-A4{width:210px;height:297px;--s:1}
+    .size-A5{width:148px;height:210px;--s:.75}
+    .size-A6{width:105px;height:148px;--s:.55}
+
+    .poster       { line-height:1.1; word-break:break-word; background:#fff; color:#000; }
+    .poster h1    { font-size:calc(2.8rem*var(--s)); margin:0 }
+    .poster h2    { font-size:calc(1.8rem*var(--s)); margin:0 }
+    .poster .preco{ font-size:calc(3.5rem*var(--s)); margin:.25rem 0 }
+
+    .dark .poster { background:#fafafa; color:#000 }
+
+    tbody tr:nth-child(even){ background:#f8faff }
+    .dark tbody tr:nth-child(even){ background:#1f2937 }
+
+    @media print{.no-print{display:none}}
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen p-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-center gap-4 mb-4">
+      <input type="file" id="fileInput" accept=".xls,.xlsx,.xlsb,.csv" class="border p-1 rounded text-sm bg-white dark:bg-gray-700 dark:text-gray-100">
+
+      <button onclick="exportToPDF()" class="bg-blue-600 text-white px-3 py-1 rounded no-print">PDF</button>
+      <button onclick="exportToPNG()" class="bg-green-600 text-white px-3 py-1 rounded no-print">PNG</button>
+      <button onclick="window.print()" class="bg-gray-600 text-white px-3 py-1 rounded no-print">Imprimir</button>
+
+      <input type="text" id="searchInput" placeholder="Filtrar nome / código" class="ml-auto border rounded px-2 py-1 bg-white dark:bg-gray-700 dark:text-gray-100">
+
+      <button onclick="toggleDarkMode()" title="Alternar tema" class="ml-2 text-2xl">🌙</button>
+    </div>
+
+    <div id="loader" class="hidden text-blue-600 dark:text-blue-400 mb-2">⏳ Processando planilha...</div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left border">
+        <thead class="bg-blue-100 dark:bg-blue-900 text-gray-800 dark:text-gray-100">
+          <tr>
+            <th class="p-2"><input type="checkbox" id="selectAll"></th>
+            <th class="p-2">Código</th>
+            <th class="p-2">Produto</th>
+            <th class="p-2">Emb.</th>
+            <th class="p-2">Validade</th>
+            <th class="p-2">PU</th>
+            <th class="p-2">Qtd/Cx</th>
+            <th class="p-2">PCx</th>
+            <th class="p-2">Margem</th>
+            <th class="p-2">Tam.</th>
+            <th class="p-2 min-w-[230px]">Cartaz</th>
+          </tr>
+        </thead>
+        <tbody id="posterList"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+    }
+  </script>
+</body>
+</html>
